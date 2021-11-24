@@ -49,10 +49,9 @@ class Adam:
 
         self.updated_v_k = np.divide(self.v_k,(1-self.mu**self.k))
         self.updated_r_k = np.divide(self.r_k,(1-self.rho**self.k))
-        #epsilon = sys.float_info.epsilon
+
         self.epsilon = np.finfo(float).eps
-        #self.epsilon = 5
-        print('eps',self.epsilon)
+
 
         self.new_weight_update = self.learning_rate * (np.divide(self.updated_v_k,(np.add(np.sqrt(self.updated_r_k),self.epsilon))))
 
