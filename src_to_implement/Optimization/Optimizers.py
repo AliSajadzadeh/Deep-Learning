@@ -49,6 +49,7 @@ class Adam:
 
         return new_weights
 
+
 class Sgd:
     def __init__(self,learning_rate):
         # if not learning_rate.is_float():
