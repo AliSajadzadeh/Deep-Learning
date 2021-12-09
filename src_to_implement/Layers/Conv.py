@@ -29,9 +29,9 @@ class Conv(Base.BaseLayer):
         self.weights = np.random.rand(self.num_kernels, *convolution_shape)
         self.gradient_weights = np.zeros((self.num_kernels, *convolution_shape))
         self.bias = np.random.rand(self.num_kernels)
-        self.gradient_bias = np.zeros(self.num_kernels)
+        self._gradient_bias = np.zeros(self.num_kernels)
         self.input_tensor = 0
-        self.optimizer = 0
+        self.optimizer = None
 
     def forward(self, input_tensor):
         self.input_tensor = input_tensor
@@ -78,7 +78,7 @@ class Conv(Base.BaseLayer):
             # for in channels
             for j in range(self.input_tensor.shape[1]):
                 # for in kernels
-                bp_error_tensor[i, j] = 0
+                #bp_error_tensor[i, j] = 0
                 for k in range(self.num_kernels):
                     if len(self.stride_shape) > 1:
                         edited_error_tensor = np.zeros((self.input_tensor.shape[2], self.input_tensor.shape[3]))
@@ -87,9 +87,10 @@ class Conv(Base.BaseLayer):
                         edited_error_tensor = np.zeros((self.input_tensor.shape[2]))
                         edited_error_tensor[0::self.stride_shape[0]] = error_tensor[i, k]
                     bp_error_tensor[i, j] = ndimage.convolve(edited_error_tensor, self.weights[k, j], mode='constant') + bp_error_tensor[i, j]
-            # kernel gradian
+            # kernel gradian and bias gradian
             for j in range(self.num_kernels):
-                self.gradient_bias[j] = np.sum(error_tensor[i, j, :])
+                # bias gradian
+                self._gradient_bias[j] = np.sum(error_tensor[i, j, :])
                 if len(self.stride_shape) > 1:
                     edited_error_tensor = np.zeros((self.input_tensor.shape[2], self.input_tensor.shape[3]))
                     edited_error_tensor[0::self.stride_shape[0], 0::self.stride_shape[1]] = error_tensor[i, j]
@@ -105,13 +106,18 @@ class Conv(Base.BaseLayer):
                     weight_gradian_tensor = signal.correlate(edited_input_tensor, edited_error_tensor, mode='valid')
                     self.gradient_weights[j, k] = weight_gradian_tensor
             # update weights and bias
-            #if self.optimizer is not None:
-                #self.bias = bias_optimizer.calculate_update(self.bias, self.gradient_bias)
-                #self.weights = weight_optimizer.calculate_update(self.weights, self.gradient_weights)
+            if self.optimizer is not None:
+                self.bias = bias_optimizer.calculate_update(self.bias, self._gradient_bias)
+                self.weights = weight_optimizer.calculate_update(self.weights, self.gradient_weights)
 
         return bp_error_tensor
 
     def initialize(self, weights_initializer, bias_initializer):
-        self.weights = weights_initializer.initialize((self.num_kernels, self.convolution_shape), np.prod(self.convolution_shape), np.prod(self.convolution_shape[1:]) * self.num_kernels)
+        self.weights = weights_initializer.initialize((self.num_kernels, *self.convolution_shape), np.prod(self.convolution_shape), np.prod(self.convolution_shape[1:]) * self.num_kernels)
         self.bias = bias_initializer.initialize(self.num_kernels, bias_initializer.fan_in, bias_initializer.fan_out)
+
+    def get_gradient_bias(self):
+        return self._gradient_bias
+
+    gradient_bias = property(get_gradient_bias)
 
