@@ -47,7 +47,7 @@ class He:
 
     def initialize(self, weights_shape, fan_in, fan_out):
         sigma = np.sqrt(2) / np.sqrt(fan_in)
-        normal_distribution = np.random.normal(0, sigma, weights_shape[0]*weights_shape[1])
+        normal_distribution = np.random.normal(0, sigma, np.prod(weights_shape))
         weights = normal_distribution.reshape(weights_shape)
         self.fan_in = fan_in
         self.fan_out = fan_out
