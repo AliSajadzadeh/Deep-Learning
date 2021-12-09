@@ -21,7 +21,7 @@ class Flatten:
 
     def backward(self,error_tensor):
         self.error_tensor = error_tensor
-        reshaped_flatten = np.reshape(self.error_tensor, [self.batch_size,self.feature_map,self.feature_map_dim[0],self.feature_map_dim[1]])
+        reshaped_flatten = np.reshape(self.error_tensor, (self.batch_size, self.feature_map, self.feature_map_dim[0],self.feature_map_dim[1]))
         return reshaped_flatten
 
 
