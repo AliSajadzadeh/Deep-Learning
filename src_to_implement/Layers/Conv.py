@@ -86,13 +86,8 @@ class Conv(Base.BaseLayer):
                         edited_error_tensor = np.zeros((self.input_tensor.shape[2]))
                         edited_error_tensor[0::self.stride_shape[0]] = error_tensor[i, k]
                     bp_error_tensor[i, j] = ndimage.convolve(edited_error_tensor, self.weights[k, j], mode='constant') + bp_error_tensor[i, j]
-            # kernel gradian and bias gradian
+            # kernel gradian
             for j in range(self.num_kernels):
-                # bias gradian
-                if len(self.convolution_shape) > 2:
-                    self._gradient_bias = np.sum(error_tensor, axis=(0, 2, 3))
-                else:
-                    self._gradient_bias = np.sum(error_tensor, axis=(0, 2))
                 if len(self.stride_shape) > 1:
                     edited_error_tensor = np.zeros((self.input_tensor.shape[2], self.input_tensor.shape[3]))
                     edited_error_tensor[0::self.stride_shape[0], 0::self.stride_shape[1]] = error_tensor[i, j]
@@ -107,7 +102,12 @@ class Conv(Base.BaseLayer):
                         edited_input_tensor = np.pad(self.input_tensor[i, k], [(self.kernel_W_L, self.kernel_W_R)], mode="constant")
                     weight_gradian_tensor = signal.correlate(edited_input_tensor, edited_error_tensor, mode='valid')
                     self._gradient_weights[j, k] += weight_gradian_tensor
-            # update weights and bias
+        # bias gradian
+        if len(self.convolution_shape) > 2:
+            self._gradient_bias = np.sum(error_tensor, axis=(0, 2, 3))
+        else:
+            self._gradient_bias = np.sum(error_tensor, axis=(0, 2))
+        # update weights and bias
         if self.optimizer is not None:
             self.bias = bias_optimizer.calculate_update(self.bias, self._gradient_bias)
             self.weights = weight_optimizer.calculate_update(self.weights, self._gradient_weights)
