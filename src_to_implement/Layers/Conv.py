@@ -27,7 +27,7 @@ class Conv(Base.BaseLayer):
                 self.kernel_W_R -= 1
         self.num_kernels = num_kernels
         self.weights = np.random.rand(self.num_kernels, *convolution_shape)
-        self.gradient_weights = np.zeros((self.num_kernels, *convolution_shape))
+        self._gradient_weights = np.zeros((self.num_kernels, *convolution_shape))
         self.bias = np.random.rand(self.num_kernels)
         self._gradient_bias = np.zeros(self.num_kernels)
         self.input_tensor = 0
@@ -38,7 +38,6 @@ class Conv(Base.BaseLayer):
         if len(self.stride_shape) > 1:
             stride_x = self.stride_shape[0]
             stride_y = self.stride_shape[1]
-            #stride_input_tensor = input_tensor[:, :, 0::stride_x, 0::stride_y]
             x_samples = int(np.shape(input_tensor)[2]/stride_x)
             if np.shape(input_tensor)[2] % stride_x != 0:
                 x_samples = x_samples+1
@@ -51,7 +50,6 @@ class Conv(Base.BaseLayer):
             x_samples = int(np.shape(input_tensor)[2]/stride_x)
             if np.shape(input_tensor)[2] % stride_x != 0:
                 x_samples = x_samples+1
-            #stride_input_tensor = input_tensor[:, :, 0::stride_x]
             output_tensor = np.zeros((input_tensor.shape[0], self.num_kernels, x_samples))
         # for in batch
         for i in range(input_tensor.shape[0]):
@@ -70,6 +68,8 @@ class Conv(Base.BaseLayer):
 
     def backward(self, error_tensor):
         bp_error_tensor = np.zeros(self.input_tensor.shape)
+        self._gradient_weights = np.zeros((self.num_kernels, *self.convolution_shape))
+        self._gradient_bias = np.zeros(self.num_kernels)
         if self.optimizer is not None:
             weight_optimizer = deepcopy(self.optimizer)
             bias_optimizer = deepcopy(self.optimizer)
@@ -78,7 +78,6 @@ class Conv(Base.BaseLayer):
             # for in channels
             for j in range(self.input_tensor.shape[1]):
                 # for in kernels
-                #bp_error_tensor[i, j] = 0
                 for k in range(self.num_kernels):
                     if len(self.stride_shape) > 1:
                         edited_error_tensor = np.zeros((self.input_tensor.shape[2], self.input_tensor.shape[3]))
@@ -90,7 +89,10 @@ class Conv(Base.BaseLayer):
             # kernel gradian and bias gradian
             for j in range(self.num_kernels):
                 # bias gradian
-                self._gradient_bias[j] = np.sum(error_tensor[i, j, :])
+                if len(self.convolution_shape) > 2:
+                    self._gradient_bias = np.sum(error_tensor, axis=(0, 2, 3))
+                else:
+                    self._gradient_bias = np.sum(error_tensor, axis=(0, 2))
                 if len(self.stride_shape) > 1:
                     edited_error_tensor = np.zeros((self.input_tensor.shape[2], self.input_tensor.shape[3]))
                     edited_error_tensor[0::self.stride_shape[0], 0::self.stride_shape[1]] = error_tensor[i, j]
@@ -104,11 +106,11 @@ class Conv(Base.BaseLayer):
                     else:
                         edited_input_tensor = np.pad(self.input_tensor[i, k], [(self.kernel_W_L, self.kernel_W_R)], mode="constant")
                     weight_gradian_tensor = signal.correlate(edited_input_tensor, edited_error_tensor, mode='valid')
-                    self.gradient_weights[j, k] = weight_gradian_tensor
+                    self._gradient_weights[j, k] += weight_gradian_tensor
             # update weights and bias
-            if self.optimizer is not None:
-                self.bias = bias_optimizer.calculate_update(self.bias, self._gradient_bias)
-                self.weights = weight_optimizer.calculate_update(self.weights, self.gradient_weights)
+        if self.optimizer is not None:
+            self.bias = bias_optimizer.calculate_update(self.bias, self._gradient_bias)
+            self.weights = weight_optimizer.calculate_update(self.weights, self._gradient_weights)
 
         return bp_error_tensor
 
@@ -119,5 +121,10 @@ class Conv(Base.BaseLayer):
     def get_gradient_bias(self):
         return self._gradient_bias
 
+    def get_gradient_weights(self):
+        return self._gradient_weights
+
     gradient_bias = property(get_gradient_bias)
+
+    gradient_weights = property(get_gradient_weights)
 
