@@ -2,14 +2,15 @@
 
 
 ## Abstract
-This project was created as a oython programming part of a deep learning course at the Pattern Recognition Lab of Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU).
+This project was created as a python programming part of a deep learning course at the Pattern Recognition Lab of Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU).
 Throughout the course, I gained a comprehensive understanding of various aspects related to deep learning, including different layers, optimization techniques,
 loss functions, regularization techniques, and time sequential algorithms such as Recurrent Neural Networks (RNN) and Long Short-Term Memory (LSTM).
 Additionally, advanced object detection algorithms like Fast R-CNN and segmentation methods were explored, providing a holistic view of deep learning concepts and applications.
 
 
 ## Objective
-The objective of the project is to gain a comprehensive understanding of deep learning layers and their functionality by implementing them from scratch.
+The objective of the project is to gain a comprehensive understanding of deep learning layers and their functionality by implementing them from scratch. 
+This hands-on approach helps us reinforce our understanding of the concepts learned in the deep learning course.
 
 
 ## Implemented Deep Learning Layers
