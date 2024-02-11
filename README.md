@@ -1,5 +1,6 @@
 *** Deep Learning Layers ***
 <Deep Learning Layers style="font-size:20px;">
+<span style="font-size:larger;">Deep Learning Layer</span>
 
 **Table of Contents**
 
