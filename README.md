@@ -1,4 +1,5 @@
 *** Deep Learning Layers ***
+<Deep Learning Layers style="font-size:20px;">
 
 **Table of Contents**
 
