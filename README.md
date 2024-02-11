@@ -1,4 +1,4 @@
-# Deep Learning Layers Implementation from Scratch
+# Deep Learning Layers Implementation
 
 
 ## Abstract
