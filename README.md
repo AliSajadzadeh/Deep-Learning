@@ -1,26 +1,29 @@
 # Deep Learning Layers Implementation from Scratch
 
-## Introduction
-This project implements various deep learning layers from scratch using Python. The purpose of this project is to provide insight into the inner workings of deep learning layers and enhance understanding of their functionality.
 
-## Installation
-To install the project, follow these steps:
-- Clone the repository: `git clone https://github.com/your_username/your_project.git`
-- Navigate to the project directory: `cd your_project`
-- Install dependencies: `pip install -r requirements.txt`
+## Abstract
+This project was created as a oython programming part of a deep learning course at the Pattern Recognition Lab of Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU).
+Throughout the course, I gained a comprehensive understanding of various aspects related to deep learning, including different layers, optimization techniques,
+loss functions, regularization techniques, and time sequential algorithms such as Recurrent Neural Networks (RNN) and Long Short-Term Memory (LSTM).
+Additionally, advanced object detection algorithms like Fast R-CNN and segmentation methods were explored, providing a holistic view of deep learning concepts and applications.
 
-## Usage
-To use the implemented deep learning layers, follow these guidelines:
-- Import the desired layer classes from the corresponding Python files.
-- Instantiate the layers and use them within your neural network architecture.
-- Refer to the examples provided in the `examples` directory for usage demonstrations.
+
+## Objective
+The objective of the project is to gain a comprehensive understanding of deep learning layers and their functionality by implementing them from scratch.
+
 
 ## Implemented Deep Learning Layers
 This project includes the following deep learning layers:
-- **Dense Layer:** Implements a fully connected layer with customizable activation function.
-- **Convolutional Layer:** Implements a convolutional layer with customizable kernel size, padding, and stride.
-- **Pooling Layer:** Implements pooling operations such as max pooling or average pooling.
-- **Activation Layer:** Implements various activation functions such as ReLU, sigmoid, or tanh.
+- **Dense Layer:** Fully connected layer with customizable activation function.
+- **Convolutional Layer:** Convolutional layer with customizable kernel size, padding, and stride.
+- **Pooling Layer:** Pooling operations such as max pooling or average pooling.
+- **Activation Layer:** Various activation functions such as ReLU, sigmoid, or tanh.
+- **Optimization Algorithms:** SGD and ADAM algorithms
+- **Loss Functions:** CrossEntropyLoss function.
 
 ## Testing
-To run unit tests for different parts of the code, execute the following command:
+For all implemented layers and functions, unit tests have been written to verify the performance of each component. These tests cover various states and situations to ensure the robustness and correctness of the deep learning functionalities. Prior to using the implemented layers in your projects, it is essential to run these unit tests to validate their behavior.
+
+## Conclusion
+Deep learning has often been referred to as a "black box" due to the lack of transparency or interpretability in the internal workings of it. However, through the process of implementing deep learning layers from scratch in this project, we've gained invaluable insights that have illuminated many aspects of how deep learning works.This hands-on approach has allowed us to see beyond the abstraction provided by high-level deep learning frameworks and comprehend the mechanics at play.
+
